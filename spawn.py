@@ -118,6 +118,23 @@ def worker(wid,Tthreads):
 		return
 	#iterate
 	startTime = time.time()
+	refDelay = 0
+	for scanpass in ['first','second','third','fourth','fifth','sixth']:
+		print 'worker {} is doing {} pass'.format(wid,scanpass)
+		for i in xrange(workStart,workStop):
+			doScan(scans[i][0], scans[i][1], api)
+		curTime=time.time()
+		curDelay=curTime-startTime
+		print 'worker {} took {} seconds to reach end of {} pass'.format(wid,curDelay,scanpass)
+		refDelay = refDelay+600
+		while refDelay<curDelay:
+			refDelay = refDelay+3600
+		if scanpass != 'sixth':
+			print 'now sleeping for {}'.format(refDelay-curDelay)
+			time.sleep(refDelay-curDelay)
+
+
+def worker2(wid,Tthreads):
 	print 'worker {} is doing first pass'.format(wid)
 	for i in xrange(workStart,workStop):
 		doScan(scans[i][0], scans[i][1], api)
